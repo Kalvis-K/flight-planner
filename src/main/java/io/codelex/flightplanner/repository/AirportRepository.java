@@ -20,6 +20,7 @@ public class AirportRepository {
         List<Airport> matchingAirports = new ArrayList<>();
         String lowercaseSearch = search.toLowerCase().trim();
         for (Airport airport : airports) {
+
             if (airport.getAirport().toLowerCase().contains(lowercaseSearch) ||
                     airport.getCity().toLowerCase().contains(lowercaseSearch) ||
                     airport.getCountry().toLowerCase().contains(lowercaseSearch)) {

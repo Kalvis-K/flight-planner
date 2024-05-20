@@ -1,6 +1,5 @@
 package io.codelex.flightplanner.service;
 
-import io.codelex.flightplanner.model.Airport;
 import io.codelex.flightplanner.repository.AirportRepository;
 import org.springframework.stereotype.Service;
 

@@ -7,6 +7,7 @@ import io.codelex.flightplanner.model.PageResult;
 import io.codelex.flightplanner.model.SearchFlightsRequest;
 import io.codelex.flightplanner.repository.AirportRepository;
 import io.codelex.flightplanner.repository.FlightRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -35,7 +36,7 @@ public class FlightController {
     }
 
     @GetMapping("/admin-api/flights/{id}")
-    public Flight getFlight(@PathVariable Long id) {
+    public Flight getFlight(@Valid @PathVariable Long id) {
         Flight flight = flightRepository.getFlightById(id);
         if (flight != null) {
             return flight;
@@ -72,7 +73,10 @@ public class FlightController {
     }
 
     @PostMapping("/api/flights/search")
-    public PageResult<Flight> searchFlights(@RequestBody SearchFlightsRequest request) {
+    public PageResult<Flight> searchFlights(@Valid @RequestBody SearchFlightsRequest request) {
+        if (request.getFrom().equals(request.getTo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request: from and to airports cannot be the same");
+        }
         List<Flight> flights = flightRepository.searchFlights(request);
         int totalItems = flights.size();
         return new PageResult<>(0, totalItems, flights);

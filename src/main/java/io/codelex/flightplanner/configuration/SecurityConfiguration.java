@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-
 @EnableWebSecurity
 @Configuration
 public class SecurityConfiguration {

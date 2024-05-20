@@ -6,41 +6,41 @@ import java.time.LocalDate;
 
 public class SearchFlightsRequest {
     @NotNull
-    private String departureAirport;
+    private String from;
 
     @NotNull
-    private String arrivalAirport;
+    private String to;
 
     @NotNull
-    private LocalDate date;
+    private LocalDate departureDate;
 
-    public SearchFlightsRequest(String departureAirport, String arrivalAirport, LocalDate date) {
-        this.departureAirport = departureAirport;
-        this.arrivalAirport = arrivalAirport;
-        this.date = date;
+    public SearchFlightsRequest(String from, String to, LocalDate departureDate) {
+        this.from = from;
+        this.to = to;
+        this.departureDate = departureDate;
     }
 
-    public String getDepartureAirport() {
-        return departureAirport;
+    public @NotNull String getFrom() {
+        return from;
     }
 
-    public void setDepartureAirport(String departureAirport) {
-        this.departureAirport = departureAirport;
+    public void setFrom(@NotNull String from) {
+        this.from = from;
     }
 
-    public String getArrivalAirport() {
-        return arrivalAirport;
+    public @NotNull String getTo() {
+        return to;
     }
 
-    public void setArrivalAirport(String arrivalAirport) {
-        this.arrivalAirport = arrivalAirport;
+    public void setTo(@NotNull String to) {
+        this.to = to;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public @NotNull LocalDate getDepartureDate() {
+        return departureDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setDepartureDate(@NotNull LocalDate departureDate) {
+        this.departureDate = departureDate;
     }
 }

@@ -8,23 +8,25 @@ import io.codelex.flightplanner.model.Flight;
 import io.codelex.flightplanner.exceptions.InvalidValueException;
 import io.codelex.flightplanner.model.SearchFlightsRequest;
 import org.springframework.stereotype.Repository;
+
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class FlightRepository {
 
     private AirportRepository airportRepository;
 
+    private final Map<Long, Flight> flightMap = new ConcurrentHashMap<>();
+    private final AtomicLong nextId = new AtomicLong(1);
+
     public FlightRepository(AirportRepository airportRepository) {
         this.airportRepository = airportRepository;
     }
 
-    private final Map<Long, Flight> flightMap = new HashMap<>();
-    private Long nextId = 1L;
 
-
-    public Flight addFlight(Flight request)
-    {
+    public Flight addFlight(Flight request) {
         List<Airport> airportsToAdd = new ArrayList<>();
         airportsToAdd.add(request.getFrom());
         airportsToAdd.add(request.getTo());
@@ -57,8 +59,9 @@ public class FlightRepository {
                 throw new DuplicateFlightException("Flight already exists");
             }
         }
-        request.setId(nextId++);
-        flightMap.put(request.getId(), request);
+        Long id = nextId.getAndIncrement();
+        request.setId(id);
+        flightMap.put(id, request);
         return request;
     }
 
@@ -72,18 +75,10 @@ public class FlightRepository {
 
     public void clearFlights() {
         flightMap.clear();
-        nextId = 1L;
+        nextId.set(1);
     }
 
     public List<Flight> searchFlights(SearchFlightsRequest request) {
-        List<Flight> matchingFlights = new ArrayList<>();
-        for (Flight flight : flightMap.values()) {
-            if (flight.getFrom().getAirport().equals(request.getDepartureAirport()) &&
-                    flight.getTo().getAirport().equals(request.getArrivalAirport()) &&
-                    flight.getDepartureTime().equals(request.getDate())) {
-                matchingFlights.add(flight);
-            }
-        }
-        return matchingFlights;
+        return new ArrayList<>(flightMap.values());
     }
 }
