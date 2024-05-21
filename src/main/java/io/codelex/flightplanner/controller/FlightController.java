@@ -5,14 +5,12 @@ import io.codelex.flightplanner.model.Airport;
 import io.codelex.flightplanner.model.Flight;
 import io.codelex.flightplanner.model.PageResult;
 import io.codelex.flightplanner.model.SearchFlightsRequest;
-import io.codelex.flightplanner.repository.AirportRepository;
-import io.codelex.flightplanner.repository.FlightRepository;
+import io.codelex.flightplanner.service.AirportService;
+import io.codelex.flightplanner.service.FlightService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -21,27 +19,27 @@ import java.util.List;
 @Validated
 public class FlightController {
 
-    private final FlightRepository flightRepository;
-    private final AirportRepository airportRepository;
+    public final FlightService flightService;
+    private final AirportService airportService;
 
-    public FlightController(FlightRepository flightRepository, AirportRepository airportRepository) {
-        this.flightRepository = flightRepository;
-        this.airportRepository = airportRepository;
+    public FlightController(AirportService airportService, FlightService flightService) {
+        this.airportService = airportService;
+        this.flightService = flightService;
     }
 
     @PostMapping("/testing-api/clear")
     @ResponseStatus(HttpStatus.OK)
     public void clearFlights() {
-        flightRepository.clearFlights();
+        flightService.clearFlights();
     }
 
     @GetMapping("/admin-api/flights/{id}")
     public Flight getFlight(@Valid @PathVariable Long id) {
-        Flight flight = flightRepository.getFlightById(id);
+        Flight flight = flightService.getFlightById(id);
         if (flight != null) {
             return flight;
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Flight not found");
+            throw new FlightNotFoundException("Flight not found");
         }
     }
 
@@ -49,46 +47,39 @@ public class FlightController {
     @ResponseStatus(HttpStatus.CREATED)
     public Flight addFlight(@RequestBody Flight request) {
         try {
-            return flightRepository.addFlight(request);
+            return flightService.addFlight(request);
         } catch (DuplicateFlightException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Flight already exists");
+            throw new DuplicateFlightException("Flight already exists");
         } catch (InvalidFlightException | InvalidValueException | InvalidDateException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid flight data");
+            throw new InvalidFlightException("Invalid flight data");
         }
     }
 
     @DeleteMapping("/admin-api/flights/{id}")
-    public ResponseEntity<Void> deleteFlight(@PathVariable Long id) {
-        Flight deletedFlight = flightRepository.deleteFlightById(id);
-        if (deletedFlight != null) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.ok().build();
-        }
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteFlight(@PathVariable Long id) {
+        flightService.deleteFlightById(id);
     }
 
     @GetMapping("/api/airports")
     public List<Airport> searchAirports(@RequestParam String search) {
-        return airportRepository.searchAirports(search);
+        return airportService.searchAirports(search);
     }
 
     @PostMapping("/api/flights/search")
     public PageResult<Flight> searchFlights(@Valid @RequestBody SearchFlightsRequest request) {
-        if (request.getFrom().equals(request.getTo())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request: from and to airports cannot be the same");
-        }
-        List<Flight> flights = flightRepository.searchFlights(request);
+        List<Flight> flights = flightService.searchFlights(request);
         int totalItems = flights.size();
         return new PageResult<>(0, totalItems, flights);
     }
 
     @GetMapping("/api/flights/{id}")
     public Flight getFlightById(@PathVariable Long id) {
-        Flight flight = flightRepository.getFlightById(id);
+        Flight flight = flightService.getFlightById(id);
         if (flight != null) {
             return flight;
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Flight not found");
+            throw new FlightNotFoundException("Flight not found");
         }
     }
 }
