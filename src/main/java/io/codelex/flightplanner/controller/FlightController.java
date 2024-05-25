@@ -73,6 +73,7 @@ public class FlightController {
         return new PageResult<>(0, totalItems, flights);
     }
 
+    
     @GetMapping("/api/flights/{id}")
     public Flight getFlightById(@PathVariable Long id) {
         Flight flight = flightService.getFlightById(id);
