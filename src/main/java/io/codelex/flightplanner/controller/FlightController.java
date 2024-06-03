@@ -5,6 +5,7 @@ import io.codelex.flightplanner.model.Airport;
 import io.codelex.flightplanner.model.Flight;
 import io.codelex.flightplanner.model.PageResult;
 import io.codelex.flightplanner.model.SearchFlightsRequest;
+import io.codelex.flightplanner.repository.FlightRepository;
 import io.codelex.flightplanner.service.AirportService;
 import io.codelex.flightplanner.service.FlightService;
 import jakarta.validation.Valid;
@@ -15,27 +16,29 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("")
 @Validated
 public class FlightController {
 
-    public final FlightService flightService;
+    private final FlightRepository flightRepository;
     private final AirportService airportService;
+    private final FlightService flightService;
 
-    public FlightController(AirportService airportService, FlightService flightService) {
+
+    public FlightController(AirportService airportService, FlightRepository flightRepository, FlightService flightService) {
         this.airportService = airportService;
+        this.flightRepository = flightRepository;
         this.flightService = flightService;
     }
 
     @PostMapping("/testing-api/clear")
     @ResponseStatus(HttpStatus.OK)
     public void clearFlights() {
-        flightService.clearFlights();
+        flightRepository.clearFlights();
     }
 
     @GetMapping("/admin-api/flights/{id}")
     public Flight getFlight(@Valid @PathVariable Long id) {
-        Flight flight = flightService.getFlightById(id);
+        Flight flight = flightRepository.findFlightById(id);
         if (flight != null) {
             return flight;
         } else {
@@ -47,7 +50,7 @@ public class FlightController {
     @ResponseStatus(HttpStatus.CREATED)
     public Flight addFlight(@RequestBody Flight request) {
         try {
-            return flightService.addFlight(request);
+            return flightRepository.addFlight(request);
         } catch (DuplicateFlightException e) {
             throw new DuplicateFlightException("Flight already exists");
         } catch (InvalidFlightException | InvalidValueException | InvalidDateException e) {
@@ -58,7 +61,7 @@ public class FlightController {
     @DeleteMapping("/admin-api/flights/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteFlight(@PathVariable Long id) {
-        flightService.deleteFlightById(id);
+        flightRepository.deleteFlightById(id);
     }
 
     @GetMapping("/api/airports")
@@ -76,7 +79,7 @@ public class FlightController {
     
     @GetMapping("/api/flights/{id}")
     public Flight getFlightById(@PathVariable Long id) {
-        Flight flight = flightService.getFlightById(id);
+        Flight flight = flightRepository.findFlightById(id);
         if (flight != null) {
             return flight;
         } else {
