@@ -6,7 +6,7 @@ import io.codelex.flightplanner.exceptions.InvalidFlightException;
 import io.codelex.flightplanner.exceptions.InvalidValueException;
 import io.codelex.flightplanner.model.Airport;
 import io.codelex.flightplanner.model.Flight;
-import io.codelex.flightplanner.service.AirportService;
+import io.codelex.flightplanner.service.AirportInMemoryService;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -14,14 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-public class FlightRepository {
+public class FlightInMemoryRepository {
 
-    private final AirportService airportService;
+    private final AirportInMemoryService airportService;
 
     private final Map<Long, Flight> flightMap = new ConcurrentHashMap<>();
     private final AtomicLong nextId = new AtomicLong(1);
 
-    public FlightRepository(AirportService airportService) {
+    public FlightInMemoryRepository(AirportInMemoryService airportService) {
         this.airportService = airportService;
     }
 
@@ -80,6 +80,4 @@ public class FlightRepository {
         flightMap.clear();
         nextId.set(1);
     }
-
-
 }

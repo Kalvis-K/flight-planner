@@ -4,7 +4,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public class AirportRepository {
+public class AirportInMemoryRepository {
 
 
 }
