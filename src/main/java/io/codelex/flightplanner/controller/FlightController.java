@@ -5,7 +5,6 @@ import io.codelex.flightplanner.model.Airport;
 import io.codelex.flightplanner.model.Flight;
 import io.codelex.flightplanner.model.PageResult;
 import io.codelex.flightplanner.model.SearchFlightsRequest;
-import io.codelex.flightplanner.service.AirportService;
 import io.codelex.flightplanner.service.FlightService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,10 +19,8 @@ import java.util.List;
 public class FlightController {
 
     public final FlightService flightService;
-    private final AirportService airportService;
 
-    public FlightController(AirportService airportService, FlightService flightService) {
-        this.airportService = airportService;
+    public FlightController(FlightService flightService) {
         this.flightService = flightService;
     }
 
@@ -35,12 +32,7 @@ public class FlightController {
 
     @GetMapping("/admin-api/flights/{id}")
     public Flight getFlight(@Valid @PathVariable Long id) {
-        Flight flight = flightService.getFlightById(id);
-        if (flight != null) {
-            return flight;
-        } else {
-            throw new FlightNotFoundException("Flight not found");
-        }
+        return flightService.getFlightById(id);
     }
 
     @PutMapping("/admin-api/flights")
@@ -63,24 +55,16 @@ public class FlightController {
 
     @GetMapping("/api/airports")
     public List<Airport> searchAirports(@RequestParam String search) {
-        return airportService.searchAirports(search);
+        return flightService.searchAirports(search);
     }
 
     @PostMapping("/api/flights/search")
     public PageResult<Flight> searchFlights(@Valid @RequestBody SearchFlightsRequest request) {
-        List<Flight> flights = flightService.searchFlights(request);
-        int totalItems = flights.size();
-        return new PageResult<>(0, totalItems, flights);
+        return flightService.searchFlights(request);
     }
 
-    
     @GetMapping("/api/flights/{id}")
     public Flight getFlightById(@PathVariable Long id) {
-        Flight flight = flightService.getFlightById(id);
-        if (flight != null) {
-            return flight;
-        } else {
-            throw new FlightNotFoundException("Flight not found");
-        }
+        return getFlight(id);
     }
 }
