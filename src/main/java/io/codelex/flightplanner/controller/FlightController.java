@@ -5,9 +5,8 @@ import io.codelex.flightplanner.model.Airport;
 import io.codelex.flightplanner.model.Flight;
 import io.codelex.flightplanner.model.PageResult;
 import io.codelex.flightplanner.model.SearchFlightsRequest;
-import io.codelex.flightplanner.repository.FlightInMemoryRepository;
-import io.codelex.flightplanner.service.AirportInMemoryService;
-import io.codelex.flightplanner.service.FlightInMemoryService;
+import io.codelex.flightplanner.repository.FlightRepository;
+import io.codelex.flightplanner.service.AirportService;
 import io.codelex.flightplanner.service.FlightService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,12 +19,12 @@ import java.util.List;
 @Validated
 public class FlightController {
 
-    private final FlightInMemoryRepository flightRepository;
-    private final AirportInMemoryService airportService;
+    private final FlightRepository flightRepository;
+    private final AirportService airportService;
     private final FlightService flightService;
 
 
-    public FlightController(AirportInMemoryService airportService, FlightInMemoryRepository flightRepository, FlightService flightService) {
+    public FlightController(AirportService airportService, FlightRepository flightRepository, FlightService flightService) {
         this.airportService = airportService;
         this.flightRepository = flightRepository;
         this.flightService = flightService;

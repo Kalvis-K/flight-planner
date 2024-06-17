@@ -1,6 +1,5 @@
 package io.codelex.flightplanner.model;
 
-import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,19 +8,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-@Entity
 public class Flight {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private Long id;
 
-    @ManyToOne
     @Valid
     @NotNull
     private Airport from;
 
-    @ManyToOne
     @Valid
     @NotNull
     private Airport to;
@@ -35,7 +30,7 @@ public class Flight {
     @NotBlank
     private String arrivalTime;
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public Flight(Airport from, Airport to, String carrier, String departureTime, String arrivalTime) {
         this.from = from;
@@ -43,10 +38,6 @@ public class Flight {
         this.carrier = carrier;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
-    }
-
-    public Flight() {
-
     }
 
     @NotNull
