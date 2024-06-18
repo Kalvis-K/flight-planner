@@ -19,6 +19,7 @@ public class FlightService {
         this.flightRepository = flightRepository;
     }
 
+
     public void clearFlights() {
         flightRepository.clearFlights();
     }
@@ -32,6 +33,27 @@ public class FlightService {
     }
 
     public Flight addFlight(Flight request) {
+        if (request.getFrom() == null || request.getTo() == null ||
+                request.getCarrier() == null ||
+                request.getDepartureTime() == null || request.getDepartureTime().isEmpty() ||
+                request.getArrivalTime() == null || request.getArrivalTime().isEmpty() ||
+                request.getFrom().getCountry() == null || request.getFrom().getCountry().isEmpty() ||
+                request.getFrom().getCity() == null || request.getFrom().getCity().isEmpty() ||
+                request.getFrom().getAirport() == null || request.getFrom().getAirport().isEmpty() ||
+                request.getTo().getCountry() == null || request.getTo().getCountry().isEmpty() ||
+                request.getTo().getCity() == null || request.getTo().getCity().isEmpty() ||
+                request.getTo().getAirport() == null || request.getTo().getAirport().isEmpty() ||
+                request.getCarrier().isEmpty()) {
+            throw new InvalidValueException("Flight data cannot contain null or empty values");
+        }
+
+        if (request.getFrom().equals(request.getTo())) {
+            throw new InvalidFlightException("Departure and arrival airports cannot be the same");
+        }
+
+        if (!request.isDepartureBeforeArrival()) {
+            throw new InvalidDateException("Departure time cannot be after or equal to arrival time");
+        }
         return flightRepository.addFlight(request);
     }
 
@@ -44,6 +66,9 @@ public class FlightService {
     }
 
     public PageResult<Flight> searchFlights(SearchFlightsRequest request) {
+        if (request.getFrom().equals(request.getTo())) {
+            throw new InvalidFlightException("From and to airports cannot be the same");
+        }
         List<Flight> flights = flightRepository.searchFlights(request);
         int totalItems = flights.size();
         return new PageResult<>(0, totalItems, flights);
