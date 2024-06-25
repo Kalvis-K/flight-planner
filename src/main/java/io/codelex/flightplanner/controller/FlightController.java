@@ -35,6 +35,7 @@ public class FlightController {
         return flightService.getFlightById(id);
     }
 
+    @Valid
     @PutMapping("/admin-api/flights")
     @ResponseStatus(HttpStatus.CREATED)
     public Flight addFlight(@RequestBody Flight request) {

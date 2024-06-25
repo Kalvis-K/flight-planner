@@ -1,14 +1,15 @@
 package io.codelex.flightplanner.model;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
 public class SearchFlightsRequest {
-    @NotNull
+    @NotBlank
     private String from;
 
-    @NotNull
+    @NotBlank
     private String to;
 
     @NotNull
@@ -20,27 +21,27 @@ public class SearchFlightsRequest {
         this.departureDate = departureDate;
     }
 
-    public @NotNull String getFrom() {
+    public String getFrom() {
         return from;
     }
 
-    public void setFrom(@NotNull String from) {
+    public void setFrom( String from) {
         this.from = from;
     }
 
-    public @NotNull String getTo() {
+    public String getTo() {
         return to;
     }
 
-    public void setTo(@NotNull String to) {
+    public void setTo(String to) {
         this.to = to;
     }
 
-    public @NotNull LocalDate getDepartureDate() {
+    public LocalDate getDepartureDate() {
         return departureDate;
     }
 
-    public void setDepartureDate(@NotNull LocalDate departureDate) {
+    public void setDepartureDate(LocalDate departureDate) {
         this.departureDate = departureDate;
     }
 }

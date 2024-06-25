@@ -1,5 +1,6 @@
 package io.codelex.flightplanner.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,11 +25,13 @@ public class Flight {
     @NotBlank
     private String carrier;
 
-    @NotBlank
-    private String departureTime;
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime departureTime;
 
-    @NotBlank
-    private String arrivalTime;
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime arrivalTime;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -36,8 +39,8 @@ public class Flight {
         this.from = from;
         this.to = to;
         this.carrier = carrier;
-        this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
+        this.departureTime = LocalDateTime.parse(departureTime, formatter);
+        this.arrivalTime = LocalDateTime.parse(arrivalTime, formatter);
     }
 
     @NotNull
@@ -73,32 +76,24 @@ public class Flight {
         this.carrier = carrier;
     }
 
-    public @NotBlank String getDepartureTime() {
+    public @NotNull LocalDateTime getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(@NotBlank String departureTime) {
+    public void setDepartureTime(@NotNull LocalDateTime departureTime) {
         this.departureTime = departureTime;
     }
 
-    public @NotBlank String getArrivalTime() {
+    public @NotNull LocalDateTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(@NotBlank String arrivalTime) {
+    public void setArrivalTime(@NotNull LocalDateTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 
-    public LocalDateTime getParsedDepartureTime() {
-        return LocalDateTime.parse(departureTime, formatter);
-    }
-
-    public LocalDateTime getParsedArrivalTime() {
-        return LocalDateTime.parse(arrivalTime, formatter);
-    }
-
     public boolean isDepartureBeforeArrival() {
-        return getParsedDepartureTime().isBefore(getParsedArrivalTime());
+        return departureTime.isBefore(arrivalTime);
     }
 
     @Override
@@ -107,8 +102,8 @@ public class Flight {
                 "from=" + from +
                 ", to=" + to +
                 ", carrier='" + carrier + '\'' +
-                ", departureTime='" + departureTime + '\'' +
-                ", arrivalTime='" + arrivalTime + '\'' +
+                ", departureTime='" + departureTime.format(formatter) + '\'' +
+                ", arrivalTime='" + arrivalTime.format(formatter) + '\'' +
                 '}';
     }
 

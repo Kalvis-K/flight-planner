@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @Profile("inmemory")
-public class FlightInMemoryService implements FlightService {
+public class FlightInMemoryService extends AbstractFlightService {
 
     private final FlightRepository flightRepository;
 
@@ -39,8 +39,8 @@ public class FlightInMemoryService implements FlightService {
     public Flight addFlight(Flight request) {
         if (request.getFrom() == null || request.getTo() == null ||
                 request.getCarrier() == null ||
-                request.getDepartureTime() == null || request.getDepartureTime().isEmpty() ||
-                request.getArrivalTime() == null || request.getArrivalTime().isEmpty() ||
+                request.getDepartureTime() == null  ||
+                request.getArrivalTime() == null  ||
                 request.getFrom().getCountry() == null || request.getFrom().getCountry().isEmpty() ||
                 request.getFrom().getCity() == null || request.getFrom().getCity().isEmpty() ||
                 request.getFrom().getAirport() == null || request.getFrom().getAirport().isEmpty() ||
@@ -79,6 +79,16 @@ public class FlightInMemoryService implements FlightService {
         List<Flight> flights = flightRepository.searchFlights(request);
         int totalItems = flights.size();
         return new PageResult<>(0, totalItems, flights);
+    }
+
+    @Override
+    public void validateFlight(Flight flight) {
+
+    }
+
+    @Override
+    public void validateSearchFlightsRequest(SearchFlightsRequest request) {
+
     }
 }
 
