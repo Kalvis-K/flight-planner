@@ -5,19 +5,18 @@ import io.codelex.flightplanner.model.Airport;
 import io.codelex.flightplanner.model.Flight;
 import io.codelex.flightplanner.model.PageResult;
 import io.codelex.flightplanner.model.SearchFlightsRequest;
-import io.codelex.flightplanner.repository.FlightRepository;
+import io.codelex.flightplanner.repository.FlightInMemoryRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-@Service
+//@Service
 @Profile("inmemory")
 public class FlightInMemoryService extends AbstractFlightService {
 
-    private final FlightRepository flightRepository;
+    private final FlightInMemoryRepository flightRepository;
 
-    public FlightInMemoryService(FlightRepository flightRepository) {
+    public FlightInMemoryService(FlightInMemoryRepository flightRepository) {
         this.flightRepository = flightRepository;
     }
 

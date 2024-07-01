@@ -1,65 +1,61 @@
 package io.codelex.flightplanner.service;
 
 import io.codelex.flightplanner.exceptions.FlightNotFoundException;
-import io.codelex.flightplanner.exceptions.InvalidDateException;
-import io.codelex.flightplanner.exceptions.InvalidFlightException;
-import io.codelex.flightplanner.exceptions.InvalidValueException;
 import io.codelex.flightplanner.model.Airport;
 import io.codelex.flightplanner.model.Flight;
 import io.codelex.flightplanner.model.PageResult;
 import io.codelex.flightplanner.model.SearchFlightsRequest;
-import io.codelex.flightplanner.repository.FlightRepository;
+import io.codelex.flightplanner.repository.AirportDbRepository;
+import io.codelex.flightplanner.repository.FlightDbRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+//@Service
 @Profile("db")
 public class FlightDbService extends AbstractFlightService {
 
-    private final FlightRepository flightRepository;
+    private final FlightDbRepository flightDbRepository;
+    private final AirportDbRepository airportDbRepository;
 
-    public FlightDbService(FlightRepository flightRepository) {
-        this.flightRepository = flightRepository;
+    public FlightDbService(FlightDbRepository flightDbRepository, AirportDbRepository airportDbRepository) {
+        this.flightDbRepository = flightDbRepository;
+        this.airportDbRepository = airportDbRepository;
     }
 
     @Override
     public void clearFlights() {
-        flightRepository.clearFlights();
+        flightDbRepository.deleteAll();
     }
 
     @Override
     public Flight getFlightById(Long id) {
-        Flight flight = flightRepository.getFlightById(id);
-        if (flight == null) {
-            throw new FlightNotFoundException("Flight not found");
-        }
-        return flight;
+        return flightDbRepository.findById(id)
+                .orElseThrow(() -> new FlightNotFoundException("Flight not found"));
     }
 
     @Override
     public Flight addFlight(Flight request) {
         validateFlight(request);
-        return flightRepository.addFlight(request);
+        return flightDbRepository.save(request);
     }
 
     @Override
     public void deleteFlightById(Long id) {
-        flightRepository.deleteFlightById(id);
+        flightDbRepository.deleteById(id);
     }
 
     @Override
     public List<Airport> searchAirports(String search) {
-        return flightRepository.searchAirports(search);
+        return airportDbRepository.searchAirports(search);
     }
 
     @Override
     public PageResult<Flight> searchFlights(SearchFlightsRequest request) {
         validateSearchFlightsRequest(request);
-        List<Flight> flights = flightRepository.searchFlights(request);
+        List<Flight> flights = flightDbRepository.findAll();
         int totalItems = flights.size();
-
         return new PageResult<>(0, totalItems, flights);
     }
 }
