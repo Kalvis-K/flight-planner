@@ -24,7 +24,6 @@ public class FlightController {
         this.flightService = flightService;
     }
 
-
     @PostMapping("/testing-api/clear")
     @ResponseStatus(HttpStatus.OK)
     public void clearFlights() {

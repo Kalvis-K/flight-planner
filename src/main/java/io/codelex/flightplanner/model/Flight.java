@@ -14,7 +14,6 @@ import java.util.Objects;
 public class Flight {
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -53,12 +52,11 @@ public class Flight {
 
     }
 
-    @NotNull
     public Long getId() {
         return id;
     }
 
-    public void setId(@NotNull Long id) {
+    public void setId( Long id) {
         this.id = id;
     }
 

@@ -4,13 +4,14 @@ import io.codelex.flightplanner.model.Airport;
 import io.codelex.flightplanner.model.Flight;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
+@Repository
 public interface FlightDbRepository extends JpaRepository<Flight, Long> {
 
-    @Query("SELECT a FROM Airport a WHERE LOWER(a.country) LIKE LOWER(CONCAT('%', :search, '%')) " +
-            "OR LOWER(a.city) LIKE LOWER(CONCAT('%', :search, '%')) " +
-            "OR LOWER(a.airport) LIKE LOWER(CONCAT('%', :search, '%'))")
-    List<Airport> searchAirports(String search);
+    @Query("SELECT f FROM Flight f WHERE f.from = :from AND f.to = :to AND f.departureTime = :departureTime AND f.carrier = :carrier")
+    Optional<Flight> findDuplicateFlight(Airport from, Airport to, LocalDateTime departureTime, String carrier);
 }
