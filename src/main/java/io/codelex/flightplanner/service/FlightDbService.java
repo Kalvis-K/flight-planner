@@ -5,23 +5,20 @@ import io.codelex.flightplanner.model.Airport;
 import io.codelex.flightplanner.model.Flight;
 import io.codelex.flightplanner.model.PageResult;
 import io.codelex.flightplanner.model.SearchFlightsRequest;
-import io.codelex.flightplanner.repository.AirportDbRepository;
 import io.codelex.flightplanner.repository.FlightDbRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-//@Service
+@Service
 @Profile("db")
 public class FlightDbService extends AbstractFlightService {
 
     private final FlightDbRepository flightDbRepository;
-    private final AirportDbRepository airportDbRepository;
 
-    public FlightDbService(FlightDbRepository flightDbRepository, AirportDbRepository airportDbRepository) {
+    public FlightDbService(FlightDbRepository flightDbRepository) {
         this.flightDbRepository = flightDbRepository;
-        this.airportDbRepository = airportDbRepository;
     }
 
     @Override
@@ -48,7 +45,7 @@ public class FlightDbService extends AbstractFlightService {
 
     @Override
     public List<Airport> searchAirports(String search) {
-        return airportDbRepository.searchAirports(search);
+        return flightDbRepository.searchAirports(search);
     }
 
     @Override
