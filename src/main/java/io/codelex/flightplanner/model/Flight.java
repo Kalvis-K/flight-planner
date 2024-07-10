@@ -1,5 +1,7 @@
 package io.codelex.flightplanner.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,44 +10,53 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+@Entity
 public class Flight {
 
-    @NotNull
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
     @Valid
     @NotNull
+    @JoinColumn(name = "from_id")
     private Airport from;
 
     @Valid
     @NotNull
+    @ManyToOne
+    @JoinColumn(name = "to_id")
     private Airport to;
 
     @NotBlank
     private String carrier;
 
-    @NotBlank
-    private String departureTime;
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime departureTime;
 
-    @NotBlank
-    private String arrivalTime;
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime arrivalTime;
 
     public Flight(Airport from, Airport to, String carrier, String departureTime, String arrivalTime) {
         this.from = from;
         this.to = to;
         this.carrier = carrier;
-        this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
+        this.departureTime = LocalDateTime.parse(departureTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        this.arrivalTime = LocalDateTime.parse(arrivalTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
-    @NotNull
+    public Flight() {
+
+    }
+
     public Long getId() {
         return id;
     }
 
-    public void setId(@NotNull Long id) {
+    public void setId( Long id) {
         this.id = id;
     }
 
@@ -73,32 +84,24 @@ public class Flight {
         this.carrier = carrier;
     }
 
-    public @NotBlank String getDepartureTime() {
+    public @NotNull LocalDateTime getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(@NotBlank String departureTime) {
+    public void setDepartureTime(@NotNull LocalDateTime departureTime) {
         this.departureTime = departureTime;
     }
 
-    public @NotBlank String getArrivalTime() {
+    public @NotNull LocalDateTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(@NotBlank String arrivalTime) {
+    public void setArrivalTime(@NotNull LocalDateTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 
-    public LocalDateTime getParsedDepartureTime() {
-        return LocalDateTime.parse(departureTime, formatter);
-    }
-
-    public LocalDateTime getParsedArrivalTime() {
-        return LocalDateTime.parse(arrivalTime, formatter);
-    }
-
     public boolean isDepartureBeforeArrival() {
-        return getParsedDepartureTime().isBefore(getParsedArrivalTime());
+        return departureTime.isBefore(arrivalTime);
     }
 
     @Override
@@ -107,8 +110,8 @@ public class Flight {
                 "from=" + from +
                 ", to=" + to +
                 ", carrier='" + carrier + '\'' +
-                ", departureTime='" + departureTime + '\'' +
-                ", arrivalTime='" + arrivalTime + '\'' +
+                ", departureTime='" + departureTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + '\'' +
+                ", arrivalTime='" + arrivalTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + '\'' +
                 '}';
     }
 
